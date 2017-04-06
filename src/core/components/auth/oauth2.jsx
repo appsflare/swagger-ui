@@ -138,6 +138,7 @@ export default class Oauth2 extends React.Component {
                                  <option value="none">None or other</option>
                                  <option value="basic">Basic auth</option>
                                  <option value="request">Request body</option>
+                                 <option value="basic+request">Both Basic and Request Body</option>                                 
                                </select>
               }
             </Col>

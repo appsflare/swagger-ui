@@ -68,7 +68,7 @@ const ThrownErrorItem = ( { error, jumpToLine } ) => {
             { error.get("message") }
           </span>
           <div>
-            { errorLine && jumpToLine ? <a onClick={jumpToLine.bind(null, errorLine)}>Jump to line { errorLine }</a> : null }
+            { errorLine ? <a onClick={jumpToLine.bind(null, errorLine)}>Jump to line { errorLine }</a> : null }
           </div>
         </div>
       }
@@ -104,10 +104,6 @@ function toTitleCase(str) {
 ThrownErrorItem.propTypes = {
   error: PropTypes.object.isRequired,
   jumpToLine: PropTypes.func
-}
-
-ThrownErrorItem.defaultProps = {
-  jumpToLine: null
 }
 
 SpecErrorItem.propTypes = {

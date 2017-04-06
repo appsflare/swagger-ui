@@ -31,16 +31,16 @@ export function logout(payload) {
   }
 }
 
-export const preAuthorizeOauth2 = (payload) => ( { authActions, errActions } ) => {
-  let { auth , token, isValid } = payload
+export const preAuthorizeOauth2 = (payload) => ({ authActions, errActions }) => {
+  let { auth, token, isValid } = payload
   let { schema, name } = auth
   let flow = schema.get("flow")
 
   // remove oauth2 property from window after redirect from authentication
   delete win.swaggerUIRedirectOauth2
 
-  if ( flow !== "accessCode" && !isValid ) {
-    errActions.newAuthErr( {
+  if (flow !== "accessCode" && !isValid) {
+    errActions.newAuthErr({
       authId: name,
       source: "auth",
       level: "warning",
@@ -48,7 +48,7 @@ export const preAuthorizeOauth2 = (payload) => ( { authActions, errActions } ) =
     })
   }
 
-  if ( token.error ) {
+  if (token.error) {
     errActions.newAuthErr({
       authId: name,
       source: "auth",
@@ -68,44 +68,52 @@ export function authorizeOauth2(payload) {
   }
 }
 
-export const authorizePassword = ( auth ) => ( { fn, authActions, errActions } ) => {
+export const authorizePassword = (auth) => ({ fn, authActions, errActions }) => {
   let { schema, name, username, password, passwordType, clientId, clientSecret } = auth
   let req = {
     url: schema.get("tokenUrl"),
     method: "post",
     headers: {
       "content-type": "application/x-www-form-urlencoded"
-    },
-    query: {
-      grant_type: "password",
-      username,
-      password,
-      scopes: encodeURIComponent(auth.scopes.join(scopeSeparator))
     }
   }
-
-  if ( passwordType === "basic") {
-    req.headers.authorization = "Basic " + btoa(clientId + ":" + clientSecret)
-  } else if ( passwordType === "request") {
-    req.query = Object.assign(req.query, { client_id: clientId, client_secret: clientSecret })
+  const query = {
+    grant_type: "password",
+    username,
+    password,
+    scope: encodeURIComponent(auth.scopes.join(scopeSeparator))
+  };
+  switch (passwordType) {
+    case 'basic':
+      req.headers.authorization = "Basic " + btoa(clientId + ":" + clientSecret)
+      break;
+    case 'request':
+      req.query = Object.assign(query, { client_id: clientId, client_secret: clientSecret })
+      break;
+    case 'basic+request':
+      req.headers.authorization = "Basic " + btoa(clientId + ":" + clientSecret)
+      let form = Object.keys(query).map(key => `${key}=${query[key]}`).join('&');
+      req.body = form;
+      break;
   }
-  return fn.fetch(req)
-    .then(( response ) => {
-      let token = JSON.parse(response.data)
-      let error = token && ( token.error || "" )
-      let parseError = token && ( token.parseError || "" )
 
-      if ( !response.ok ) {
-        errActions.newAuthErr( {
+  return fn.fetch(req)
+    .then((response) => {
+      let token = JSON.parse(response.data)
+      let error = token && (token.error || "")
+      let parseError = token && (token.parseError || "")
+
+      if (!response.ok) {
+        errActions.newAuthErr({
           authId: name,
           level: "error",
           source: "auth",
           message: response.statusText
-        } )
+        })
         return
       }
 
-      if ( error || parseError ) {
+      if (error || parseError) {
         errActions.newAuthErr({
           authId: name,
           level: "error",
@@ -117,5 +125,5 @@ export const authorizePassword = ( auth ) => ( { fn, authActions, errActions } )
 
       authActions.authorizeOauth2({ auth, token })
     })
-    .catch(err => { errActions.newAuthErr( err ) })
+    .catch(err => { errActions.newAuthErr(err) })
 }
