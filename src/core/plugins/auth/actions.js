@@ -83,8 +83,9 @@ export const authorizePassword = (auth) => ({ authActions }) => {
   }
   /* cockpit code starts here */
   else if (passwordType === "basic+request") {
-    req.headers.authorization = "Basic " + btoa(clientId + ":" + clientSecret)
-    Object.assign(form, { username }, { password });
+    headers.authorization = "Basic " + btoa(clientId + ":" + clientSecret)
+    Object.assign(form, { username }, { password }, { scope: auth.scopes.join(scopeSeparator) });
+    delete form.scopes;
   }
   /* Cockpit code ends here */
   else {
