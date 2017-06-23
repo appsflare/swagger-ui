@@ -12,6 +12,7 @@ ENV OAUTH_REALM "**None**"
 ENV OAUTH_APP_NAME "**None**"
 ENV OAUTH_ADDITIONAL_PARAMS "**None**"
 ENV SWAGGER_JSON "/app/swagger.json"
+ENV STYLESHEET_URL "./swagger-ui.css"
 ENV PORT 80
 
 RUN apk add --update nginx

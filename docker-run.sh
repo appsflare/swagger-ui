@@ -40,6 +40,10 @@ else
   sed -i "s|http://example.com/api|$API_URL|g" $INDEX_FILE
 fi
 
+
+sed -i "s|./swagger-ui.css|$STYLESHEET_URL|g" $INDEX_FILE
+
+
 if [[ -n "$VALIDATOR_URL" ]]; then
   sed -i "s|.*validatorUrl:.*$||g" $INDEX_FILE
   TMP_VU="$VALIDATOR_URL"
