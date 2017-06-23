@@ -144,6 +144,9 @@ export default class Oauth2 extends React.Component {
                         <option value="request-body">Request body</option>
                         <option value="basic">Basic auth</option>
                         <option value="query">Query parameters</option>
+                        {/* cockpit code starts here */}
+                        <option value="basic+request">Both Basic and Request Body</option>
+                        {/* cockpit code ends here */}
                       </select>
                     </Col>
                 }
