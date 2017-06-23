@@ -41,7 +41,7 @@ export default {
   [UPDATE_PARAM]: ( state, {payload} ) => {
     let { path, paramName, value, isXml } = payload
     return state.updateIn( [ "resolved", "paths", ...path, "parameters" ], fromJS([]), parameters => {
-      let index = parameters.findIndex( p => p.get( "name" ) === paramName )
+      const index = parameters.findIndex(p => p.get( "name" ) === paramName )
       if (!(value instanceof win.File)) {
         value = fromJSOrdered( value )
       }
@@ -97,7 +97,11 @@ export default {
   },
 
   [UPDATE_OPERATION_VALUE]: (state, { payload: { path, value, key } }) => {
-    return state.setIn(["resolved", "paths", ...path, key], fromJS(value))
+    let operationPath = ["resolved", "paths", ...path]
+    if(!state.getIn(operationPath)) {
+      return state
+    }
+    return state.setIn([...operationPath, key], fromJS(value))
   },
 
   [CLEAR_RESPONSE]: (state, { payload: { path, method } } ) =>{

@@ -53,8 +53,7 @@ export default class ApiKeyAuth extends React.Component {
         <h4>Api key authorization<JumpToPath path={[ "securityDefinitions", name ]} /></h4>
         { value && <h6>Authorized</h6>}
         <Row>
-          <Markdown options={{html: true, typographer: true, linkify: true, linkTarget: "_blank"}}
-                    source={ schema.get("description") } />
+          <Markdown source={ schema.get("description") } />
         </Row>
         <Row>
           <p>Name: <code>{ schema.get("name") }</code></p>
@@ -64,11 +63,10 @@ export default class ApiKeyAuth extends React.Component {
         </Row>
         <Row>
           <label>Value:</label>
-          <Col>
-            {
-              value || <Input type="text" onChange={ this.onChange }/>
-            }
-          </Col>
+          {
+            value ? <code> ****** </code>
+                  : <Col><Input type="text" onChange={ this.onChange }/></Col>
+          }
         </Row>
         {
           errors.valueSeq().map( (error, key) => {

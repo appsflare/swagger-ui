@@ -28,11 +28,25 @@ export default class ParameterRow extends Component {
 
   componentWillReceiveProps(props) {
     let { specSelectors, pathMethod, param } = props
+    let example = param.get("example")
     let defaultValue = param.get("default")
     let parameter = specSelectors.getParameter(pathMethod, param.get("name"))
-    let value = parameter ? parameter.get("value") : ""
-    if ( defaultValue !== undefined && value === undefined ) {
-      this.onChangeWrapper(defaultValue)
+    let paramValue = parameter ? parameter.get("value") : undefined
+    let enumValue = parameter ? parameter.get("enum") : undefined
+    let value
+
+    if ( paramValue !== undefined ) {
+      value = paramValue
+    } else if ( example !== undefined ) {
+      value = example
+    } else if ( defaultValue !== undefined) {
+      value = defaultValue
+    } else if ( param.get("required") && enumValue && enumValue.size ) {
+      value = enumValue.first()
+    }
+
+    if ( value !== undefined ) {
+      this.onChangeWrapper(value)
     }
   }
 
@@ -85,8 +99,7 @@ export default class ParameterRow extends Component {
         </td>
 
         <td className="col parameters-col_description">
-          <Markdown options={{html: true, typographer: true, linkify: true, linkTarget: "_blank"}}
-                    source={ param.get("description") }/>
+          <Markdown source={ param.get("description") }/>
           {(isFormData && !isFormDataSupported) && <div>Error: your browser does not support FormData</div>}
 
           { bodyParam || !isExecute ? null

@@ -1,13 +1,13 @@
 import Im from "immutable"
-import assign from "object-assign"
-import shallowEqual from "shallowequal"
 
 import camelCase from "lodash/camelCase"
 import upperFirst from "lodash/upperFirst"
 import _memoize from "lodash/memoize"
+import find from "lodash/find"
 import some from "lodash/some"
 import eq from "lodash/eq"
 import { memoizedSampleFromSchema, memoizedCreateXMLExample } from "core/plugins/samples/fn"
+import win from "./window"
 
 const DEFAULT_REPONSE_KEY = "default"
 
@@ -34,6 +34,9 @@ export function arrayify (thing) {
 export function fromJSOrdered (js) {
   if(isImmutable(js))
     return js // Can't do much here
+
+  if (js instanceof win.File)
+    return js
 
   return !isObject(js) ? js :
     Array.isArray(js) ?
@@ -85,7 +88,7 @@ export function objReduce(obj, fn) {
   return Object.keys(obj).reduce((newObj, key) => {
     let res = fn(obj[key], key)
     if(res && typeof res === "object")
-      assign(newObj, res)
+      Object.assign(newObj, res)
     return newObj
   }, {})
 }
@@ -415,11 +418,6 @@ export function pascalCaseFilename(filename) {
   return pascalCase(filename.replace(/\.[^./]*$/, ""))
 }
 
-// Only compare a set of props
-export function shallowEqualKeys(a,b, keys) {
-  return !!keys.find(key => !shallowEqual(a[key], b[key]))
-}
-
 // Check if ...
 // - new props
 // - If immutable, use .is()
@@ -453,13 +451,13 @@ export const propChecker = (props, nextProps, objectList=[], ignoreList=[]) => {
 }
 
 const validateNumber = ( val ) => {
-  if ( !/^\d+(.?\d+)?$/.test(val)) {
+  if ( !/^-?\d+(.?\d+)?$/.test(val)) {
     return "Value must be a number"
   }
 }
 
 const validateInteger = ( val ) => {
-  if ( !/^\d+$/.test(val)) {
+  if ( !/^-?\d+$/.test(val)) {
     return "Value must be integer"
   }
 }
@@ -558,4 +556,42 @@ export const btoa = (str) => {
   }
 
   return buffer.toString("base64");
+}
+
+export const sorters = {
+  operationsSorter: {
+    alpha: (a, b) => a.get("path").localeCompare(b.get("path")),
+    method: (a, b) => a.get("method").localeCompare(b.get("method"))
+  }
+}
+
+export const buildFormData = (data) => {
+  let formArr = []
+
+  for (let name in data) {
+    let val = data[name]
+    if (val !== undefined && val !== "") {
+      formArr.push([name, "=", encodeURIComponent(val).replace(/%20/g,"+")].join(""))
+    }
+  }
+  return formArr.join("&")
+}
+
+export const filterConfigs = (configs, allowed) => {
+    let i, filteredConfigs = {}
+
+    for (i in configs) {
+        if (allowed.indexOf(i) !== -1) {
+            filteredConfigs[i] = configs[i]
+        }
+    }
+
+    return filteredConfigs
+}
+
+// Is this really required as a helper? Perhaps. TODO: expose the system of presets.apis in docs, so we know what is supported
+export const shallowEqualKeys = (a,b, keys) => {
+  return !!find(keys, (key) => {
+    return eq(a[key], b[key])
+  })
 }

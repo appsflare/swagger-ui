@@ -1,12 +1,9 @@
 import React, { PropTypes } from "react"
 import OriCollapse from "react-collapse"
-import _Markdown from "react-remarkable"
 
 function xclass(...args) {
   return args.filter(a => !!a).join(" ").trim()
 }
-
-export const Markdown = _Markdown
 
 export class Container extends React.Component {
   render() {
@@ -16,7 +13,7 @@ export class Container extends React.Component {
     if(fullscreen)
       return <section {...rest}/>
 
-    let containerClass = "container" + (full ? "-full" : "")
+    let containerClass = "swagger-container" + (full ? "-full" : "")
     return (
       <section {...rest} className={xclass(rest.className, containerClass)}/>
     )
@@ -73,7 +70,7 @@ export class Col extends React.Component {
       }
     }
 
-    let classes = xclass(rest.className, "clear", ...classesAr)
+    let classes = xclass(rest.className, ...classesAr)
 
     return (
       <section {...rest} style={{display: hide ? "none": null}} className={classes}/>
@@ -127,7 +124,7 @@ export const Input = (props) => <input {...props} />
 
 export class Select extends React.Component {
   static propTypes = {
-    allowedValues: PropTypes.object,
+    allowedValues: PropTypes.array,
     value: PropTypes.any,
     onChange: PropTypes.func,
     multiple: PropTypes.bool,
