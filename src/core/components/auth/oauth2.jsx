@@ -141,9 +141,9 @@ export default class Oauth2 extends React.Component {
                   isAuthorized ? <code> { this.state.passwordType } </code>
                     : <Col tablet={10} desktop={10}>
                       <select id="password_type" data-name="passwordType" onChange={ this.onInputChange }>
-                        <option value="request-body">Request body</option>
+                        {/*<option value="request-body">Request body</option>
                         <option value="basic">Basic auth</option>
-                        <option value="query">Query parameters</option>
+                        <option value="query">Query parameters</option>*/}
                         {/* cockpit code starts here */}
                         <option value="basic+request">Both Basic and Request Body</option>
                         {/* cockpit code ends here */}
