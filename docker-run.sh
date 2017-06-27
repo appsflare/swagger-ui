@@ -53,8 +53,8 @@ if [[ -n "$VALIDATOR_URL" ]]; then
 fi
 
 if [[ ! -z "${BASE_PATH}" ]]; then
-  mkdir -p "$BASE_PATH"
-  cp * "./$BASE_PATH"
+  mkdir -p "$NGINX_ROOT/$BASE_PATH"
+  cp $NGINX_ROOT/* "$NGINX_ROOT/$BASE_PATH"
 fi
 
 exec nginx -g 'daemon off;'
