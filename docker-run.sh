@@ -52,8 +52,7 @@ if [[ -n "$VALIDATOR_URL" ]]; then
   unset TMP_VU
 fi
 
-if [[ -z "${BASE_PATH}" ]]; then  
-else
+if [[ ! -z "${BASE_PATH}" ]]; then
   mkdir -p "$BASE_PATH"
   cp * "./$BASE_PATH"
 fi
